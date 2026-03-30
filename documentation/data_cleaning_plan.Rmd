@@ -1,0 +1,95 @@
+---
+title: "Data Cleaning Plan - Air Pollution and COPD study"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# Introduction
+
+This document outlines the procedures and quality checks applied to the raw datasets to produce a clean, analysis-ready dataset for the Air Pollution and COPD study. The goal is to ensure reproducibility, data integrity, and adherence to the study inclusion/exclusion criteria.
+
+# Reproducibility
+
+- Set air-pollution-COPD-study.Rproj as working directory. All scripts use relative paths.
+- R version used was R version 4.5.1 (2025-06-13).
+- The following R packages need to be installed: tidyverse, dplyr, ggplot2.
+
+# Data sources
+
+Data were obtained from a large electronic health record (EHR) database from a multi-center healthcare system in the US. Raw data files are stored in data/raw folder.
+
+ - cohort-data.csv contains participant-level information including demographic info, lifestyle info and follow-up dates
+ - icd-data.csv contains diagnostic codes recording comorbidities and COPD diagnoses over time
+ - residential-data.csv contains county-level residential history for each participant, recording address periods with start and end dates
+
+## Variables and Covariates
+
+- Demographic: ID, age, sex, SES (socioeconomic status) at cohort entry (index date)
+- Lifestyle/behavioural: smoking status and BMI at cohort entry (index date)
+- ICD codes for COPD diagnosis: J44.0, J44.1, J44.9
+- ICD codes for comorbidities: Type 2 diabetes (E11.9, E11.65, E11.3X, E11.4X), Hypertension (I10, I11.9, I12.9), and Asthma (J45.0, J45.1, J45.9)
+
+Note: Refer to pre_analysis_data_dictionary.pdf within documentation/ to access data dictionary of variables included in the raw pre-analysis cohort, icd, and residential datasets
+
+# Data Cleaning and Preparation
+
+## Goal
+
+To transform raw datasets into analysis-ready merged dataset that adhere to documented inclusion / exclusion criteria and data quality checks.
+
+## Data Quality Checks
+
+Each of the three raw datasets (cohort, icd, and residential data) were checked for data quality via following indicators:
+
+- **Analyzable** – Data are in a structured, predictable format with one observation per row, headers for variables, and at least one unique identifier.
+- **Interpretable** – Variable names are unique, meaningful, consistent, and follow a clear naming convention.
+- **Complete** – No duplicate or missing cases unless expected; row and column counts match expectations; all required variables are present.
+- **Valid** – Variable types, values, and ranges align with expectations; missingness occurs only where appropriate.
+- **Accurate** – Related variables are consistent and data reflect realistic values based on domain knowledge.
+- **Consistent** – Variables are consistently formatted and categorized, including across multiple sources.
+- **De-identified** – No direct identifiers are present; indirect identifiers are minimized.
+
+***Changes made via data quality checks are documents in corresponding R scripts in 'scripts/'***
+
+***Script references***
+
+- 01_clean_cohort.R
+- 02_clean_icd.R
+- 03_clean_residential.R
+  
+***Handling of Missing Data***
+
+1. Missing data were not removed but flagged as NA consistently.
+  
+## Inclusion / Exclusion Criteria
+
+Datasets were filtered to ensure cohort members met the following inclusion criteria.
+To be included in the study, participants must meet the following eligibility criteria at their index date:
+
+- Cohort entry date falls within the index period (January 1, 2005 to December 31, 2010)
+- Age 40 years or older at index date
+- Residential data available in the 10 years prior to the index date 
+  (exposure assessment period from January 1, 1995; 10 years is chosen because long term exposure is of interest)
+- EHR linkage in the year prior to and at least 30 days after the index date
+
+## Filtering procedures
+
+- Filter cohort dataset to include participants aged ≥40 at index date.
+- Exclude participants with <10 years of residential history prior to index date.
+- Ensure EHR linkage exists for 1 year prior and at least 30 days after index date.
+- Apply any additional clinical or data quality filters (e.g., remove duplicate IDs, invalid dates, or implausible BMI values).
+- Documented filtering steps are implemented in 01_clean_cohort.R, 02_clean_icd.R, and 03_clean_residential.R.
+  
+## Merging of datasets
+
+- Merge cohort, ICD, and residential datasets by participant ID.
+- Ensure one-to-one mapping between cohort records and corresponding ICD/residential data.
+- Check for unmatched IDs and handle accordingly (flag for review).
+- Verify that merged dataset maintains all required variables for analysis.
+- Merging steps are implemented in 04_merge_data.R.
+
+# Outputs
+
+- All intermediate outputs such as intermediate datasets (pre-merging) summary tables and plots are saved to outputs/
+- Data dictionary corresponding to final merged dataset is saved in documentation/
