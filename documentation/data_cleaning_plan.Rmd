@@ -13,7 +13,7 @@ This document outlines the procedures and quality checks applied to the raw data
 
 - Set air-pollution-COPD-study.Rproj as working directory. All scripts use relative paths.
 - R version used was R version 4.5.1 (2025-06-13).
-- The following R packages need to be installed: tidyverse, dplyr, ggplot2.
+- The following R packages need to be installed: tidyverse, skimr, lubridate, stringr.
 
 # Data sources
 
@@ -43,6 +43,9 @@ To transform raw datasets into analysis-ready merged dataset that adhere to docu
 Each of the three raw datasets (cohort, icd, and residential data) were checked for data quality via following indicators:
 
 - **Analyzable** – Data are in a structured, predictable format with one observation per row, headers for variables, and at least one unique identifier.
+
+    - Fully duplicate rows to be removed.
+    
 - **Interpretable** – Variable names are unique, meaningful, consistent, and follow a clear naming convention.
 - **Complete** – No duplicate or missing cases unless expected; row and column counts match expectations; all required variables are present.
 - **Valid** – Variable types, values, and ranges align with expectations; missingness occurs only where appropriate.
