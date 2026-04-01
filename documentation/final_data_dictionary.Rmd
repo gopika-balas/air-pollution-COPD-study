@@ -21,11 +21,11 @@ data_dict <- data.frame(
   ),
   Description = c(
     "Unique patient identifier",
-    "Cohort entry (index) date",
-    "Age at cohort entry",
+    "Cohort entry (index) date - 1 Jan 2005 to 31 Dec 2010",
+    "Age at cohort entry (minimum 40 years)",
     "Biological sex of participant",
     "Body Mass Index at baseline",
-    "Socioeconomic status category",
+    "Socioeconomic status category (High Low Medium)",
     "Smoking status (Never, Former, Current)",
     "Last known follow-up date",
     "Incident COPD after entry (1 = yes, 0 = no)",
@@ -43,7 +43,7 @@ data_dict <- data.frame(
   Type = c(
     "Integer","Date","Numeric","Categorical","Numeric","Categorical",
     "Categorical","Date","Binary","Date","Binary","Binary","Binary",
-    "Date","Date","Categorical","Categorical","Numeric","Categorical"
+    "Date","Date","String","String","Numeric","String"
   )
 )
 

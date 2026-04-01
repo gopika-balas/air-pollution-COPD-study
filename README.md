@@ -77,7 +77,7 @@ Goal: To transform raw datasets into analysis ready merged dataset that adhere t
 
 R version used was R version 4.5.1 (2025-06-13).
 The following R packages need to be installed:
-tidyverse, skmir, lubridate, stringr
+tidyverse, skmir, lubridate, stringr, writexl
 
 ### Steps to reproduce the analysis-ready dataset
 

@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(skimr)
 library(lubridate)
+library(writexl)
 
 # Load the raw data 
 icd_data <- read.csv("data/raw/icd-data.csv")
@@ -23,7 +24,7 @@ icd_data <- icd_data %>%
   rename(ID = id,
          icd_diagnosis_date = icd_date)
 
-length(unique(icd_data$ID))
+length(unique(icd_data$ID)) # starting with 3080 patients
 
 # Checking for fully duplicate rows
 sum(duplicated(icd_data))
@@ -105,9 +106,12 @@ icd_codes_required <- c(
 )
 
 selected_icd_data <- icd_data %>% 
-  filter(icd_code %in% icd_codes_required) %>% 
+  filter(icd_code %in% icd_codes_required) %>%  # filtering for desired icd codes and removing problematic diagnoses future dates reduces the observations from 20201 to 18503
   filter(is.na(future_date_flag)) %>% 
   select(-future_date_flag)
+
+# no of patients at this stage left are 1630
+length(unique(selected_icd_data$ID))
 
 # Checking for EHR linkage in the year prior and at least 30 days after index date
 
@@ -117,11 +121,13 @@ selected_icd_data <- selected_icd_data %>%
     by = "ID"
   )
 
+# applying criteria for minimum EHR linkage (1 year prior and at least 30 days after) 
 selected_icd_data <- selected_icd_data %>%
   mutate(
     pre_entry_window  = icd_diagnosis_date >= (entry_date - years(1)) & icd_diagnosis_date < entry_date,
     post_entry_window = icd_diagnosis_date >= (entry_date + days(30))
   )
+
 
 patients_ok <- selected_icd_data %>%
   group_by(ID) %>%
@@ -135,6 +141,11 @@ patients_ok <- selected_icd_data %>%
 selected_icd_data <- selected_icd_data %>%
   filter(ID %in% patients_ok) %>% 
   select(-pre_entry_window, -post_entry_window)
+
+
+length(unique(selected_icd_data$ID))
+
+# applying the EHR linkage criteria reduced the patients to 324
 
 ####-------------------------------------------------------------
 
@@ -179,3 +190,5 @@ icd_patient_data <- selected_icd_data %>%
 
 # View patient-level summary
 head(icd_patient_data)
+
+write_xlsx(icd_patient_data, "outputs/icd_patient_data.xlsx")

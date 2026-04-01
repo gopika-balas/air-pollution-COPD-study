@@ -4,6 +4,7 @@ library(ggplot2)
 library(skimr)
 library(lubridate)
 library(stringr)
+library(writexl)
 
 # Load the raw data 
 residential_data <- read.csv("data/raw/residential-data.csv")
@@ -14,7 +15,7 @@ residential_data <- residential_data %>%
   rename(ID = id)
 
 length(unique(residential_data$ID))
-# residential data is not likely available for many participants as this is < 3080 IDs.
+# residential data is not likely available for many participants as this is < 3080 IDs.It is available for 2803 participants.
 
 # column headings are otherwise consistent and meaningful
 str(residential_data)
@@ -42,7 +43,7 @@ invalid_dates <- residential_data %>%
            today_date < address_end_date)
 
 # How many rows are invalid and flagging these
-nrow(invalid_dates)
+nrow(invalid_dates) # 304 observations have invalid date issues
 head(invalid_dates)
 
 residential_data <- residential_data %>% 
@@ -55,6 +56,8 @@ residential_data <- residential_data %>%
   filter(address_date_issue == FALSE) %>% 
   select(-address_date_issue)
   
+length(unique(residential_data$ID)) # participant number is now 2757
+
 # Checking for full duplicates - no issues
 sum(duplicated(residential_data))
 
@@ -73,6 +76,8 @@ residential_data <- residential_data %>%
 residential_data <- residential_data %>%
   filter(state != "Country of Mexico") # removed Mexico entry
 
+length(unique(residential_data$ID)) # participant numbers not affected due to this
+
 # Applying part of inclusion criteria that residential data in the 10 years prior index date (entry date is available) are of interest
 
 residential_data <- residential_data %>%
@@ -87,6 +92,8 @@ residential_data <- residential_data %>%
 residential_data <- residential_data %>% 
   filter(overlaps_10yr_window == TRUE) %>% 
   select(-overlaps_10yr_window)
+
+length(unique(residential_data$ID)) # This now leaves 2751 participants
 
 # Truncating to ensure the address state date (if it starts from before the 10 year prior entry date point) begins at entry date
 residential_data <- residential_data %>%
@@ -150,3 +157,6 @@ residential_continuity %>%
 
 # All address data for patients who moved is complete
 selected_residential_data <- residential_data
+length(unique(selected_residential_data$ID)) # 2751 patients in the final dataset
+
+write_xlsx(selected_residential_data, "outputs/selected_residential_data.xlsx")

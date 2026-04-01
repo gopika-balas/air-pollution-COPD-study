@@ -3,7 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(skimr)
 library(lubridate)
-
+library(writexl)
 # Load the raw data 
 cohort_data <- read.csv("data/raw/cohort-data.csv")
 
@@ -49,7 +49,8 @@ cohort_data %>%
   arrange(ID, entry_date) %>% # order by ID and optionally by date
   ungroup() 
 
-# Exact duplicates removed as they are likely to be data entry errors
+# Exact duplicates removed as they are likely to be data entry errors - this reduced the number of observations
+# from 3088 to 3080
 
 cohort_data <- cohort_data %>% 
   distinct()
@@ -82,6 +83,7 @@ nrow(cohort_data) == length(unique(cohort_data$ID))
 
 # Checking if there are missing values in any of the columns for any observation
 colSums(is.na(cohort_data) | (cohort_data == "" & !sapply(cohort_data, is.numeric)))
+# No missing values found
 
 # No expected columns are missing, crosschecked with data dictionary
 # No information on the sample size expected, so unable to validate that part
@@ -228,9 +230,14 @@ data.frame(
 
 selected_cohort_data <- cohort_data %>%
   filter(
-    entry_date >= as.Date("2005-01-01") & entry_date <= as.Date("2010-12-31"),
-    age >= 40
-  )
+    entry_date >= as.Date("2005-01-01") & entry_date <= as.Date("2010-12-31"))
+
+# Applying index date period criteria reduces number of eligible observations (participants) to 646
+
+selected_cohort_data <- selected_cohort_data %>% 
+  filter(age >= 40)
+
+# Applying age criteria then reduces number of eligible participants to 640
 
 all(is.na(selected_cohort_data$age_flag))
 all(is.na(selected_cohort_data$date_flag))
@@ -239,3 +246,5 @@ all(is.na(selected_cohort_data$date_flag))
 selected_cohort_data <- selected_cohort_data %>% 
   select(-age_flag,-date_flag)
 
+
+write_xlsx(selected_cohort_data, "outputs/selected_cohort_data.xlsx")

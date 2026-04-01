@@ -13,7 +13,7 @@ This document outlines the procedures and quality checks applied to the raw data
 
 - Set air-pollution-COPD-study.Rproj as working directory. All scripts use relative paths.
 - R version used was R version 4.5.1 (2025-06-13).
-- The following R packages need to be installed: tidyverse, skimr, lubridate, stringr.
+- The following R packages need to be installed: tidyverse, skimr, lubridate, stringr, writexl.
 
 # Data sources
 
