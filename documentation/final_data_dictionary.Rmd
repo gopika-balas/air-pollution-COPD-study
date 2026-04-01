@@ -1,0 +1,53 @@
+---
+title: "Final Data Dictionary"
+author: "Gopika Balasubramanian"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+library(knitr)
+
+data_dict <- data.frame(
+  Variable = c(
+    "ID","entry_date","age","sex","bmi","socioeconomic_status",
+    "smoking_status","follow_up_date","incident_COPD","copd_incident_date",
+    "asthma","diabetes","hypertension","exposure_start_date",
+    "exposure_end_date","state","county","total_years","coverage_flag"
+  ),
+  Description = c(
+    "Unique patient identifier",
+    "Cohort entry (index) date - 1 Jan 2005 to 31 Dec 2010",
+    "Age at cohort entry (minimum 40 years)",
+    "Biological sex of participant",
+    "Body Mass Index at baseline",
+    "Socioeconomic status category (High Low Medium)",
+    "Smoking status (Never, Former, Current)",
+    "Last known follow-up date",
+    "Incident COPD after entry (1 = yes, 0 = no)",
+    "Date of first COPD diagnosis after entry",
+    "Asthma at or before entry (1 = yes, 0 = no)",
+    "Diabetes at or before entry (1 = yes, 0 = no)",
+    "Hypertension at or before entry (1 = yes, 0 = no)",
+    "Start date of residential exposure period",
+    "End date of residential exposure period",
+    "State of residence",
+    "County of residence",
+    "Total years of residential coverage",
+    "Coverage status (sufficient/insufficient)"
+  ),
+  Type = c(
+    "Integer","Date","Numeric","Categorical","Numeric","Categorical",
+    "Categorical","Date","Binary","Date","Binary","Binary","Binary",
+    "Date","Date","String","String","Numeric","String"
+  )
+)
+
+kable(data_dict, caption = "Data Dictionary")
+
+```
+
